@@ -1,12 +1,13 @@
 import dotenv from 'dotenv';
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
+import Login from '../interfaces/loginInterface';
 import User from '../interfaces/userInterface';
 
 dotenv.config();
-const secret: Secret = process.env.JWT_SECRET || 'felipe';
+const secret: Secret = 'felipe';
 const jwtConfig: SignOptions = { expiresIn: '7d', algorithm: 'HS256' };
 
-const makeToken = (user: User): string => {
+const makeTokenUser = (user: User): string => {
   const validData = {
     username: user.username,
     classe: user.classe,
@@ -17,4 +18,13 @@ const makeToken = (user: User): string => {
   return token;
 };
 
-export default makeToken;
+const makeTokenLogin = (login: Login): string => {
+  const validData = {
+    username: login.username,
+  };
+  const token = jwt.sign({ data: validData }, secret, jwtConfig);
+
+  return token;
+};
+
+export default { makeTokenUser, makeTokenLogin };
