@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import jwt, { Secret, SignOptions } from 'jsonwebtoken';
+import jwt, { JwtPayload, Secret, SignOptions } from 'jsonwebtoken';
 import Login from '../interfaces/loginInterface';
 import User from '../interfaces/userInterface';
 
@@ -27,4 +27,13 @@ const makeTokenLogin = (login: Login): string => {
   return token;
 };
 
-export default { makeTokenUser, makeTokenLogin };
+const validateToken = (token: string): JwtPayload | boolean => {
+  try {
+    const response = jwt.verify(token, secret);
+    return response as JwtPayload;
+  } catch (err) {
+    return false;
+  }
+};
+
+export default { makeTokenUser, makeTokenLogin, validateToken };

@@ -1,5 +1,6 @@
-import { Pool } from 'mysql2/promise';
+import { Pool, ResultSetHeader } from 'mysql2/promise';
 import Order from '../interfaces/orderInterface';
+import User from '../interfaces/userInterface';
 
 export default class OrderModel {
   public connection: Pool;
@@ -17,5 +18,24 @@ export default class OrderModel {
     );
     const [rows] = result;
     return rows as Order[];
+  }
+
+  public async getIdByUsername(username: string): Promise<User[]> {
+    const result = await this.connection.execute<ResultSetHeader>(
+      'SELECT * FROM Trybesmith.Users WHERE username=?',
+      [username],
+    );
+    const [rows] = result;
+    return rows as unknown as User[];
+  }
+
+  public async add(userId: number): Promise<number> {  
+    const result = await this.connection.execute<ResultSetHeader>(
+      'INSERT INTO Trybesmith.Orders (userId) VALUES (?)',
+      [userId],
+    );
+    const [dataInserted] = result;
+    const { insertId } = dataInserted;
+    return insertId as number;
   }
 }
